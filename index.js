@@ -25,6 +25,23 @@ const CTRL_V = {
   type: "keypress",
 };
 
+const runIoHook = !!process.env.runIoHook;
+
+if (!runIoHook) {
+  const { spawn } = require("child_process");
+  const subprocess = spawn(process.argv[0], process.argv.slice(1), {
+    detached: true,
+    windowsHide: true,
+    env: {
+      runIoHook: "true",
+    },
+    stdio: "ignore",
+  });
+
+  subprocess.unref();
+  return;
+}
+
 const list = args["<strings>"];
 clipboardy.writeSync(list.shift());
 
